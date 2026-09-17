@@ -1,0 +1,247 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   DESIGN TOKENS — "Neon Dusk"
+   Paleta autoral (pôr do sol de Miami) com contraste verificado sobre --color-dusk-900.
+   Todos os pares texto/fundo abaixo passam WCAG AA (>= 4.5:1):
+     mist  #b9aedb  ->  9.4:1
+     ember #ff2e88  ->  5.6:1
+     solar #ffb020  -> 10.7:1
+     aqua  #2de2c5  -> 11.9:1
+   ========================================================================== */
+@theme {
+  /* --- Superfícies --- */
+  --color-dusk-950: #07030f;
+  --color-dusk-900: #100722;
+  --color-dusk-800: #1a0b33;
+  --color-dusk-700: #271046;
+  --color-dusk-600: #3a1a63;
+
+  /* --- Acentos --- */
+  --color-ember-400: #ff5ca0;
+  --color-ember-500: #ff2e88;
+  --color-ember-600: #e01169;
+
+  --color-coral-500: #ff6b3d;
+  --color-solar-500: #ffb020;
+  --color-aqua-500: #2de2c5;
+
+  /* --- Texto --- */
+  --color-ink: #f5f1ff;
+  --color-mist: #b9aedb;
+  --color-haze: #8d80b3;
+
+  /* --- Tipografia --- */
+  --font-display: var(--font-display-face), 'Arial Narrow', 'Haettenschweiler', sans-serif;
+  --font-sans: var(--font-sans-face), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, 'SFMono-Regular', monospace;
+
+  /* --- Elevação neon --- */
+  --shadow-glow-ember: 0 0 28px -6px rgb(255 46 136 / 0.6), 0 0 8px -2px rgb(255 46 136 / 0.45);
+  --shadow-glow-solar: 0 0 28px -6px rgb(255 176 32 / 0.6), 0 0 8px -2px rgb(255 176 32 / 0.45);
+  --shadow-glow-aqua: 0 0 28px -6px rgb(45 226 197 / 0.6), 0 0 8px -2px rgb(45 226 197 / 0.45);
+
+  /* --- Motion --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-breathe: breathe 5s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Compensa o header fixo ao navegar por âncora. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-dusk-950);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    /* Evita travar o scroll horizontal com os elementos decorativos fora da viewport. */
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-ember-500);
+    color: #000;
+  }
+
+  /* Foco visível e consistente — nunca removido, só estilizado. */
+  :focus-visible {
+    outline: 2px solid var(--color-solar-500);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @supports selector(::-webkit-scrollbar) {
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-dusk-950);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--color-ember-500), var(--color-coral-500));
+      border: 2px solid var(--color-dusk-950);
+      border-radius: 999px;
+    }
+  }
+
+  /* `<dialog>` nativo: backdrop próprio, sem overlay manual. */
+  dialog::backdrop {
+    background: color-mix(in oklab, var(--color-dusk-950) 88%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  dialog[open] {
+    animation: dialog-in 0.28s var(--ease-out-expo);
+  }
+
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+  }
+}
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+
+/* Cantos chanfrados — a assinatura geométrica do layout. */
+@utility chamfer-sm {
+  clip-path: polygon(
+    8px 0,
+    100% 0,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    0 100%,
+    0 8px
+  );
+}
+
+@utility chamfer-md {
+  clip-path: polygon(
+    14px 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%,
+    0 14px
+  );
+}
+
+@utility chamfer-lg {
+  clip-path: polygon(
+    26px 0,
+    100% 0,
+    100% calc(100% - 26px),
+    calc(100% - 26px) 100%,
+    0 100%,
+    0 26px
+  );
+}
+
+/* Grain procedural, sem requisição de rede. */
+@utility grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+@utility text-gradient-sunset {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-ember-500),
+    var(--color-coral-500) 45%,
+    var(--color-solar-500)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+/* Preenche a área clicável do card inteiro a partir do link do título:
+   um alvo grande sem aninhar <a> dentro de <a>. */
+@utility stretched-link {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+}
+
+/* ==========================================================================
+   SCROLL REVEAL
+   Progressive enhancement: sem JS, `data-reveal` nunca é marcado e o conteúdo
+   permanece visível. Com JS, o IntersectionObserver marca `data-reveal="in"`.
+   ========================================================================== */
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.6s var(--ease-out-expo),
+      transform 0.6s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal='in'] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   ACESSIBILIDADE: prefers-reduced-motion
+   Desliga animação decorativa sem quebrar o estado final de nenhum elemento.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
