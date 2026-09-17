@@ -7,6 +7,9 @@ import type { NextConfig } from 'next';
  */
 const isStaticExport = process.env.NEXT_OUTPUT === 'export';
 
+// No GitHub Pages o repositório fica sob /new-portfolio
+const repoName = '/new-portfolio';
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
@@ -21,7 +24,14 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
-  ...(isStaticExport ? { output: 'export' as const } : {}),
+  ...(isStaticExport
+    ? {
+        output: 'export' as const,
+        basePath: repoName,
+        assetPrefix: repoName,
+        trailingSlash: true,
+      }
+    : {}),
 
   images: {
     formats: ['image/avif', 'image/webp'],
